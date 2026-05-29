@@ -40,7 +40,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Create the .env.local file and set this variables:
 
 ```bash
-OPENROUTER_API_KEY=sk-or-v1-
+OPENROUTER_API_KEY=
 OPENROUTER_MODEL=openai/gpt-oss-120b:free
 ```
-
