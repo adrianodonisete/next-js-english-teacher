@@ -1,4 +1,4 @@
-import { streamText } from 'ai';
+import { streamText, convertToModelMessages } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 
 const openrouter = createOpenAI({
@@ -15,18 +15,13 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model,
-    messages: [
-      {
-        role: 'system',
-        content: `You are a friendly and patient English teacher. 
+    system: `You are a friendly and patient English teacher. 
         - Respond naturally to the user's messages
         - After responding, gently correct any grammar or vocabulary mistakes 
         - Maintain an encouraging and supportive tone
-        - Keep corrections brief and educational`
-      },
-      ...messages
-    ],
+        - Keep corrections brief and educational`,
+    messages: await convertToModelMessages(messages),
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
