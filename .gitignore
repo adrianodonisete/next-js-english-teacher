@@ -43,5 +43,8 @@ next-env.d.ts
 # IDEs
 .vscode/*
 
+# RTK
+.rtk/
+
 # tests
 /dev/testes/*
