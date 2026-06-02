@@ -3,7 +3,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { createSession } from '@/lib/auth'
+import { createSession, destroySession } from '@/lib/auth'
 
 export async function loginAction(
   _prevState: { error: string },
@@ -39,4 +39,9 @@ export async function loginAction(
 
   await createSession()
   redirect('/')
+}
+
+export async function logoutAction(): Promise<void> {
+  await destroySession()
+  redirect('/login')
 }
