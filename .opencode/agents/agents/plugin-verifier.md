@@ -4,7 +4,7 @@ description: >-
   configured correctly in the opencode environment. If any plugin is missing or
   misconfigured, prompt the user to install or configure it appropriately.
 mode: subagent
-model: openrouter/free
+model: deepseek/deepseek-v4-flash
 permission:
   edit: deny
   webfetch: deny
