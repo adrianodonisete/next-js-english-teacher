@@ -5,6 +5,7 @@ import { useChat } from '@ai-sdk/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { MarkdownRenderer } from '@/components/markdown-renderer';
 import { Send, User, Bot, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -20,12 +21,12 @@ function MessageBubble({ role, parts }: { role: string; parts: Array<{ type: str
         {isUser ? <User className="size-4" /> : <Bot className="size-4" />}
       </div>
       <div className={cn(
-        'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap',
+        'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
         isUser
           ? 'bg-primary text-primary-foreground rounded-tr-sm'
           : 'bg-muted text-foreground rounded-tl-sm'
       )}>
-        {content}
+        {isUser ? content : <MarkdownRenderer content={content} />}
       </div>
     </div>
   );
@@ -53,7 +54,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="mx-auto flex h-dvh max-w-2xl flex-col">
+    <div className="mx-auto flex h-full max-w-2xl flex-col">
       <header className="border-b border-border px-4 py-3 text-center">
         <h1 className="text-lg font-semibold">English Teacher</h1>
         <p className="text-xs text-muted-foreground">Practice English with AI</p>
