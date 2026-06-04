@@ -1,0 +1,50 @@
+---
+description: English Teacher app — stack, layout, env, and conventions
+alwaysApply: true
+---
+
+# English Teacher Chatbot
+
+Next.js 16 App Router app: AI English practice chat with token-gated access.
+
+## Stack
+
+- **Next.js** 16.2.x, **React** 19, **TypeScript** (strict)
+- **Tailwind CSS** v4 (`@import "tailwindcss"` in `app/globals.css`)
+- **shadcn/ui** (base-nova, `@base-ui/react`) — add components via `components.json`
+- **Vercel AI SDK** (`ai`, `@ai-sdk/react`, `@ai-sdk/openai`) + **OpenRouter**
+- Path alias: `@/*` → project root
+
+## Layout
+
+| Area | Role |
+|------|------|
+| `app/page.tsx` | Client chat UI (`useChat`) |
+| `app/login/page.tsx` | Token login (`useActionState` + server action) |
+| `app/api/chat/route.ts` | Streaming chat API (edge runtime) |
+| `app/actions/auth.ts` | `loginAction`, `logoutAction` |
+| `proxy.ts` | Auth gate (replaces deprecated `middleware`) |
+| `lib/auth.ts` | HMAC session cookie |
+| `lib/rate-limit.ts` | In-memory login rate limit (per IP) |
+| `components/NavBar.tsx` | External links + logout |
+| `components/ui/*` | shadcn primitives |
+
+## Environment (`.env.local`)
+
+- `OPENROUTER_API_KEY` — OpenRouter API key
+- `OPENROUTER_MODEL` — e.g. `openai/gpt-oss-120b:free` (fallback in code if unset)
+- `LOGIN_TOKEN` — shared access token for login (required for auth)
+
+Never commit `.env.local` or secrets. Do not log env values.
+
+## Commands
+
+- `npm run dev` — dev server
+- `npm run build` / `npm run start` — production
+- `npm run lint` — ESLint (eslint-config-next)
+
+## Scope when editing
+
+- Prefer minimal diffs; match existing file style (quotes, semicolons vary by file).
+- Extend `NAV_LINKS` in `NavBar.tsx` for new top nav items (external `target="_blank"`).
+- Chat max width and nav use `max-w-2xl` — keep new pages visually consistent.

@@ -1,0 +1,38 @@
+---
+description: OpenRouter + Vercel AI SDK chat streaming
+globs: app/api/**/*.ts,app/page.tsx
+alwaysApply: false
+---
+
+# AI chat (OpenRouter + AI SDK)
+
+## API route (`app/api/chat/route.ts`)
+
+- OpenRouter via `createOpenAI({ apiKey, baseURL: 'https://openrouter.ai/api/v1' })`
+- Model id from `process.env.OPENROUTER_MODEL` with code fallback
+- `streamText` + `convertToModelMessages` from `ai`
+- Response: `result.toUIMessageStreamResponse()`
+- `export const runtime = 'edge'`
+
+Keep the **English teacher** system prompt tone: friendly, brief grammar corrections, encouraging.
+
+## Client (`app/page.tsx`)
+
+- `useChat()` from `@ai-sdk/react` (default `/api/chat`)
+- Messages use **`parts`** (UI message format), not legacy `content` string only:
+
+```tsx
+parts.map(p => (p.type === 'text' ? p.text : '')).join('')
+```
+
+- Status: `ready` | `submitted` | `streaming` — disable input while loading
+- `sendMessage({ text: input })` for user turns
+
+## Auth boundary
+
+`proxy.ts` returns **401 JSON** for `/api/chat` when session is invalid. UI should surface `error` from `useChat` gracefully.
+
+## Adding features
+
+- New tools or models: change route only; keep env vars documented in README
+- Do not expose `OPENROUTER_API_KEY` to the client

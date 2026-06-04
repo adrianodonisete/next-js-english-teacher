@@ -1,0 +1,38 @@
+---
+description: React 19 UI — shadcn, Tailwind 4, client/server split
+globs: **/*.tsx,components/**,app/**/*.css
+alwaysApply: false
+---
+
+# UI components
+
+## shadcn / Tailwind
+
+- Primitives live in `components/ui/` (Button, Input, ScrollArea, etc.)
+- Use `cn()` from `@/lib/utils` for conditional classes
+- Design tokens: CSS variables in `app/globals.css` (`bg-background`, `text-muted-foreground`, `border-border`, etc.)
+- Icons: `lucide-react`
+- New shadcn components: follow `components.json` aliases (`@/components/ui`)
+
+## Client vs server
+
+| File | Directive | Why |
+|------|-----------|-----|
+| `app/page.tsx` | `'use client'` | `useChat`, form state, refs |
+| `app/login/page.tsx` | `'use client'` | `useActionState` |
+| `components/NavBar.tsx` | `'use client'` | `usePathname`, logout form |
+| `app/layout.tsx` | Server | metadata, font, shell |
+
+Hide chrome on login: `NavBar` returns `null` when `pathname === '/login'`.
+
+## Patterns
+
+- External nav links: `<a target="_blank" rel="noopener noreferrer">`
+- Server actions in forms: `<form action={logoutAction}>` or `formAction` from `useActionState`
+- Loading: `Loader2` + `animate-spin`; disabled states on inputs/buttons during pending/streaming
+- Layout: `h-dvh`, `max-w-2xl`, sticky nav with `backdrop-blur`
+
+## Accessibility
+
+- Meaningful labels/placeholders on login and chat input
+- `autoComplete="off"` on token field

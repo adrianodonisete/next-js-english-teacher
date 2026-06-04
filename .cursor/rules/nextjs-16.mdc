@@ -1,0 +1,33 @@
+---
+description: Next.js 16 APIs — read bundled docs; use proxy not middleware
+alwaysApply: true
+---
+
+# Next.js 16 — not the Next.js you know
+
+Training data may be wrong for this repo. **Before changing routing, data fetching, config, or App Router code**, read the relevant guide under:
+
+`node_modules/next/dist/docs/`
+
+Follow deprecation notices there. For v16 migrations (proxy, turbopack, lint), see `01-app/02-guides/upgrading/version-16.md` in that folder.
+
+## Proxy (not middleware)
+
+- File: **`proxy.ts`** at project root (not `middleware.ts`)
+- Export: **`export function proxy(request: NextRequest)`** (not `middleware`)
+- Runtime: **nodejs only** — edge is not supported in `proxy`
+- Use `config.matcher` to limit paths (current: `/`, `/login`, `/api/chat`)
+
+Do not reintroduce `middleware.ts` or rename `proxy` back to `middleware` unless explicitly migrating away from v16 conventions.
+
+## App Router patterns in this repo
+
+- **Server Components** by default; add `'use client'` only when hooks, browser APIs, or event handlers are needed
+- **Server Actions**: `'use server'` in `app/actions/*`; use `redirect()` after successful login
+- **Route handlers**: `app/api/**/route.ts`; chat route uses `export const runtime = 'edge'` (separate from proxy runtime)
+
+## When unsure
+
+1. Grep or read `node_modules/next/dist/docs/` for the feature
+2. Check an existing file in this repo (`proxy.ts`, `app/layout.tsx`, `app/api/chat/route.ts`)
+3. Avoid APIs marked deprecated in v16 upgrade docs

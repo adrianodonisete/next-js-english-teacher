@@ -1,0 +1,38 @@
+---
+description: Session auth, login rate limit, and proxy gate
+globs: proxy.ts,lib/auth.ts,lib/rate-limit.ts,app/actions/**/*.ts,app/login/**
+alwaysApply: false
+---
+
+# Auth and proxy
+
+## Session (`lib/auth.ts`)
+
+- Cookie name: `session`
+- Value: `{expiresAt}.{hmac}` signed with `LOGIN_TOKEN` via `createHmac('sha256', ...)`
+- `createSession` / `destroySession` use `cookies()` from `next/headers`
+- Cookie: `httpOnly`, `sameSite: 'lax'`, `secure` in production, 24h `maxAge`
+
+## Login (`app/actions/auth.ts`)
+
+- Compare submitted token to `process.env.LOGIN_TOKEN` (constant-time not required for shared secret; still trim input)
+- Rate limit via `checkRateLimit(ip)` — 5 attempts / 15 min per IP (in-memory `Map`; resets on server restart)
+- IP from `x-forwarded-for` or `x-real-ip`
+- On success: `createSession()` then `redirect('/')`
+- Return `{ error: string }` for failures (used by `useActionState`)
+
+## Proxy (`proxy.ts`)
+
+| Path | Valid session | Invalid session |
+|------|---------------|-----------------|
+| `/login` | Redirect `/` | Allow |
+| `/`, other matched | Continue | Redirect `/login` |
+| `/api/chat` | Continue | **401** `{ error: 'Unauthorized' }` |
+
+Update `config.matcher` when adding protected routes.
+
+## Security notes
+
+- Require `LOGIN_TOKEN` at runtime; return clear error if unset
+- Never put `LOGIN_TOKEN` or `OPENROUTER_API_KEY` in client bundles
+- Logout: `logoutAction` → `destroySession()` → `redirect('/login')`
