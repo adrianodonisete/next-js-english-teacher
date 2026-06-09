@@ -1,13 +1,16 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { logoutAction } from '@/app/actions/auth'
 
 const NAV_LINKS = [
-  { label: 'Models', href: 'https://openrouter.ai/models' },
-  { label: 'OpenCode', href: 'https://opencode.ai/go' },
+  { label: 'Chat', href: '/', internal: true },
+  { label: 'Translate Prompt', href: '/translate-prompt', internal: true },
+  { label: 'Models', href: 'https://openrouter.ai/models', internal: false },
+  { label: 'OpenCode', href: 'https://opencode.ai/go', internal: false },
 ] as const
 
 export function NavBar() {
@@ -20,14 +23,23 @@ export function NavBar() {
         <ul className="flex items-center gap-1">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-8 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {link.label}
-              </a>
+              {link.internal ? (
+                <Link
+                  href={link.href}
+                  className="inline-flex h-8 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-8 items-center rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
