@@ -4,7 +4,8 @@
       "enabled": true
     },
     "vercel": {
-      "enabled": true
+      "enabled": true,
+      "gitEmail": "adrianodonisete@gmail.com"
     }
   }
 }
